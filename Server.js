@@ -59,14 +59,7 @@ io.sockets.on('connection', function (socket) {
 			Log(socket.id + " maked move from " + data.xfrom + " " + data.yfrom + " to " + data.xto + " " + data.yto + "\r\n");
 		}
 		else {
-			//var roomClients = io.sockets.clients(socket.inroom);
-		    //for (var socketId in roomClients) {
 		        this.disconnect();
-		        //Log(socketId + " disconnected.\r\n");
-		    //}
-			//io.sockets.in(socket.inroom).leave(socket.inroom);
-			//Log(socket.inroom + " must be leaved.\r\n");
-			
 		}
 	});
 	socket.on("gameOver", function (data) {
@@ -93,32 +86,4 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 	
-	/*socket.once("disconnect", function (data) {
-	    
-	    if (io.sockets.clients(AloneRoom).length != 0) {
-	        console.log(io.sockets.clients(AloneRoom).length);
-	        console.log("Disconnect 1 called " + socket.id + "\r\n");
-	        socket.leave(AloneRoom);
-	        
-	    }
-
-	    var roomClients = io.sockets.clients(AloneRoom);
-	    console.log(roomClients.length);
-	    if (roomClients.length != 0) {
-	        console.log("Disconnect 2 called " + roomClients[0].id + "\r\n");
-	        roomClients[0].disconnect();
-	        roomClients[0].leave();
-	    }*/
-
-	    //console.log("Disconnect called. " + socket.id + "\r\n");
-	    //for (var socketId in roomClients) { 
-	    //    if (socket != roomClients[socketId]) {
-	    //        console.log("Disconnect called. " + roomClients[socketId].id + "\r\n");
-	    //        io.sockets.clients(AloneRoom)[socketId].disconnect();
-	    //        //Log(socketId + " disconnected. " + roomClients[socketId] + "\r\n");
-	    //    }
-	    //    roomClients[socketId].leave(AloneRoom);
-	    //}
-	//});
-    //написать обработчик на ondisconnect
 });
