@@ -29,7 +29,12 @@ var mkdanger;
 var socket=io.connect('http://localhost:81');
 var enabled=false;
 //var socket=io.connect('http://10.10.2.4:81');
-
+var xf=0;
+var xt=0;
+var yf=0;
+var yt=0;
+var nf='bishop';
+var nfid=0;
 	
 socket.on('connected',function(){
 	console.log('Client connected');
@@ -40,7 +45,6 @@ socket.on('connected',function(){
 socket.on('waitingForPlayers',function(){
 	console.log('In waiting mode');
 	socket.emit('readyToPlay');
-	//prestate=2;
 	opponent=1;
 	enabled=true;
 	});	
@@ -58,13 +62,36 @@ socket.on('makeMove',function(data){
 	tdclick(document.getElementById((data.yfrom*8+data.xfrom)));
 	if(!(data.yto==-1 && data.xto==-1))
 	tdclick(document.getElementById((data.yto*8+data.xto)));
+	if(data.newfigure)
+	{
+	switch(data.newfigure)
+	{
+	case 'rook':
+	nfid=73;
+	break;
+	case 'knight':
+	nfid=73;
+	break;
+	case 'bishop':
+	nfid=73;
+	break;
+	case 'queen':
+	nfid=73;
+	break;
+	}
+	if(state==2)nfid+=4;
+	tdclick(document.getElementById(nfid));
+	}
 	enabled=true;
 	});
 	
-function makemove(xf,yf,xt,yt)
+function makemove()
 {
 console.log('Made move');
+if(!transform)
 socket.emit('makeMove',{ xfrom: xf, yfrom: yf, xto: xt, yto: yt });
+else
+socket.emit('makeMove',{ xfrom: xf, yfrom: yf, xto: xt, yto: yt ,newfigure: nf});
 }
 
   $(document).ready(function() {//построение доски
@@ -215,7 +242,14 @@ var chld=e.children[0];
 	e.className=selected.className;
 	selected.className='empty';
 	//if(transform==true)
-		if(state!=opponent) makemove((parseInt(selected.id,10)%8),(parseInt(selected.id,10)/8 | 0),(parseInt(e.id,10)%8),(parseInt(e.id,10)/8 | 0));
+		if(state!=opponent) 
+		{
+		xf=parseInt(selected.id,10)%8;
+		yf=(parseInt(selected.id,10)/8 | 0);
+		xt=parseInt(e.id,10)%8;
+		yt=(parseInt(e.id,10)/8 | 0);
+		if(!transform) makemove();
+		}
 		if(!transform) enabled=false;
 		selected=e;
 		//else
@@ -228,6 +262,7 @@ var chld=e.children[0];
    	  else*/{
             if(!checkmat(king,opntcName)){
 			if(dangercounter>1 && dangerouscheck(parseInt(selected.id,10),selected.className)) {
+				socket.emit('gameOver');
 				alert('Шах и мат!');
 				location.reload();
 				return;
@@ -237,6 +272,7 @@ var chld=e.children[0];
 			else{
 				danger=false;			
 				if(dangerouscheck(parseInt(selected.id,10),selected.className)){
+				socket.emit('gameOver');
 				alert('Шах и мат!');
 				location.reload();
 				return;
@@ -285,7 +321,25 @@ break
 case 'menu':
 if(transform==true){
 	enabled=false;
-	if(state!=opponent) makemove((parseInt(e.id,10)%8),(parseInt(e.id,10)/8 | 0),-1,-1);
+	if(state!=opponent) 
+	{
+	switch(e.children[0].id)
+	{
+	case "Rook":
+	nf="rook";
+	break;
+	case "Knight":
+	nf="knight";
+	break;
+	case "Bishop":
+	nf="bishop";
+	break;
+	case "Queen":
+	nf="queen";
+	break;
+	}
+	makemove();
+	}
 	var chld=e.children[0];
 	e.appendChild(selected.children[0]);
 	selected.appendChild(chld);
