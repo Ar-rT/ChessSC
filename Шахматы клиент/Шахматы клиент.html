@@ -57,11 +57,21 @@ socket.on('gameStarted',function(){
 	});	
 
 socket.on('makeMove',function(data){
+	if(state==opponent)
+	{
+	if(data.xfrom==8) {xf=0;yf++};
+	if(data.xto==8) {xt=0;yt++};
+	xt++;
+	xf++;
+	//if(data.yfrom==8) xf=0;
+	//if(data.yto==8) xt=0;
+	//yt++;
+	//yf++;
 	console.log('Got move');
 	enabled=true;
-	tdclick(document.getElementById((data.yfrom*8+data.xfrom)));
+	tdclick(document.getElementById((data.yfrom*8+data.xfrom+1)));
 	if(!(data.yto==-1 && data.xto==-1))
-	tdclick(document.getElementById((data.yto*8+data.xto)));
+	tdclick(document.getElementById((data.yto*8+data.xto+1)));
 	if(data.newfigure)
 	{
 	switch(data.newfigure)
@@ -70,28 +80,33 @@ socket.on('makeMove',function(data){
 	nfid=73;
 	break;
 	case 'knight':
-	nfid=73;
+	nfid=74;
 	break;
 	case 'bishop':
-	nfid=73;
+	nfid=75;
 	break;
 	case 'queen':
-	nfid=73;
+	nfid=76;
 	break;
 	}
 	if(state==2)nfid+=4;
 	tdclick(document.getElementById(nfid));
 	}
 	enabled=true;
+	}
 	});
 	
 function makemove()
 {
 console.log('Made move');
+if(xf==0) {xf=8;yf--;}
+if(xt==0) {xt=8;yt--;}
+xf--;
+xt--;
 if(!transform)
-socket.emit('makeMove',{ xfrom: xf, yfrom: yf, xto: xt, yto: yt });
+socket.emit('makeMove',{ xfrom: (xf), yfrom: yf, xto: (xt), yto: yt });
 else
-socket.emit('makeMove',{ xfrom: xf, yfrom: yf, xto: xt, yto: yt ,newfigure: nf});
+socket.emit('makeMove',{ xfrom: (xf), yfrom: yf, xto: (xt), yto: yt ,newfigure: nf});
 }
 
   $(document).ready(function() {//построение доски
@@ -510,7 +525,7 @@ function checkmat(id,cName)
 	 if(posTo>id-id%8-1 && document.getElementById(posTo).className!=cName)//=='empty')
 	 if(dangerouscheck(posTo,cName)) return true; else dangercounter++;
 	 posTo=id+1;
-	 if(posTo<id-id%8+8 && document.getElementById(posTo).className!=cName)//=='empty')
+	 if(posTo<id-id%8+9 && document.getElementById(posTo).className!=cName)//=='empty')
 	 if(dangerouscheck(posTo,cName)) return true; else dangercounter++;
 	 posTo=id-9;
 	 if(posTo>0 && document.getElementById(posTo).className!=cName)//=='empty')
