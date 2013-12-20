@@ -2,7 +2,8 @@
 <head> 
 <title>Шахматы Online</title>  
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
-<script src="http://localhost:81/socket.io/socket.io.js">
+<!--<script src="http://localhost:81/socket.io/socket.io.js">-->
+<script src="http://10.10.2.10:81/socket.io/socket.io.js">
 </script>
 <style type="text/css">
 .white{	width: 56px;	height: 56px; }
@@ -15,7 +16,7 @@
 <body>
 <script> 
 var state=0;
-//var prestate=1;
+var prestate=1;
 var opponent=2;
 var only=false;
 var selected;
@@ -26,9 +27,9 @@ var ishorse=false;
 var danger=false;
 var dangercounter=0;
 var mkdanger;
-var socket=io.connect('http://localhost:81');
+<!--var socket=io.connect('http://localhost:81');-->
 var enabled=false;
-//var socket=io.connect('http://10.10.2.4:81');
+var socket=io.connect('http://10.10.2.10:81');
 var xf=0;
 var xt=0;
 var yf=0;
@@ -393,10 +394,11 @@ function dangercheck(posTo,elem1,elem2,clas,cName)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function dangerouscheck(id,cName)
 {
-var posTo=id-8;
+var king=bking;
 var clas='black';
 var result;
 if(clas==cName) clas='white';
+var posTo = id-8;
 while(posTo>0){
 		result=dangercheck(posTo,'Rook','Queen',clas,cName);
 		if (result==0) break; else if(result==1) return true; else if(result==2)  return false;
@@ -460,53 +462,77 @@ while(posTo<border){
 		if (result==0) break; else if(result==1) return true; else if(result==2)  return false;
 		posTo=posTo+7;
 	 }
-posTo=id-17;
 var nid=id%8;
+posTo=id-7;
+if((nid>0) && id>8){
+	 elem=document.getElementById(posTo);
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
+	 if (elem.children[0].id=='Pawn') {return false;}
+	}
+posTo=id-9;	
+if((nid>1) && id>8){
+	 elem=document.getElementById(posTo);
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
+	 if (elem.children[0].id=='Pawn') {return false;}
+	}	
+posTo=id+7;
+if((nid>1) && id<57){
+	 elem=document.getElementById(posTo);
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
+	 if (elem.children[0].id=='Pawn') {return false;}
+	}
+posTo=id+9;	
+if((nid>0) && id>57){
+	 elem=document.getElementById(posTo);
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
+	 if (elem.children[0].id=='Pawn') {return false;}
+	}	
+posTo=id-17;
 if((nid>1 || nid==0) && id>16){
 	 elem=document.getElementById(posTo);
-	 if (elem.className!='empty' && elem.className!=cName && elem.className!='chsd') 
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
 	 if (elem.children[0].id=='Knight' /*&& dangerouscheck(parseInt(elem.id,10),clas)*/) {/*ishorse=true;*/ return false;}
 	}
 posTo=id-15;
 if(nid<8 && id>17 && nid!=0){
 	 elem=document.getElementById(posTo);
-	 if (elem.className!='empty' && elem.className!=cName && elem.className!='chsd') 
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
 	 if (elem.children[0].id=='Knight' /*&& dangerouscheck(parseInt(elem.id,10),clas)*/) {/*ishorse=true;*/ return false;}
 	}
 posTo=id-10;
 if((nid>2 || nid==0) && id>8){
 	 elem=document.getElementById(posTo);
-	 if (elem.className!='empty' && elem.className!=cName && elem.className!='chsd') 
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
 	 if (elem.children[0].id=='Knight' /*&& dangerouscheck(parseInt(elem.id,10),clas)*/) {/*ishorse=true;*/ return false;}
 	}
 posTo=id-6;
 if(nid<7 && id>8){
 	 elem=document.getElementById(posTo);
-	 if (elem.className!='empty' && elem.className!=cName && elem.className!='chsd') 
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
 	 if (elem.children[0].id=='Knight' /*&& dangerouscheck(parseInt(elem.id,10),clas)*/) {/*ishorse=true;*/ return false;}
 	}
 posTo=id+6;
 if((nid>2 || nid==0) && id<57){
 	 elem=document.getElementById(posTo);
-	 if (elem.className!='empty' && elem.className!=cName && elem.className!='chsd') 
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
 	 if (elem.children[0].id=='Knight' /*&& dangerouscheck(parseInt(elem.id,10),clas)*/) {/*ishorse=true;*/ return false;}
 	}
 posTo=id+10;
 if(nid<7 && id<55 && nid!=0){
 	 elem=document.getElementById(posTo);
-	 if (elem.className!='empty' && elem.className!=cName && elem.className!='chsd') 
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
 	 if (elem.children[0].id=='Knight' /*&& dangerouscheck(parseInt(elem.id,10),clas)*/) {/*ishorse=true;*/ return false;}
 	}
 posTo=id+15;
 if((nid>1 || nid==0) && id<49){
 	 elem=document.getElementById(posTo);
-	 if (elem.className!='empty' && elem.className!=cName && elem.className!='chsd') 
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
 	 if (elem.children[0].id=='Knight' /*&& dangerouscheck(parseInt(elem.id,10),clas)*/) {/*ishorse=true;*/ return false;}
 	}
 posTo=id+17;
 if(nid<8 && id<49){
 	 elem=document.getElementById(posTo);
-	 if (elem.className!='empty' && elem.className!=cName && elem.className!='chsd') 
+	 if (elem.className!='empty' && elem.className!=cName || (elem.className=='chsd' && elem.children[0].id=='Empty')) 
 	 if (elem.children[0].id=='Knight' /*&& dangerouscheck(parseInt(elem.id,10),clas)*/) {/*ishorse=true;*/ return false;}
 	}
 	 
@@ -756,6 +782,8 @@ var doc=document.getElementById(id);
 	 posTo=id+7;
 	 if(posTo<65)
 	 check(doc,document.getElementById(posTo),cName,false);
+	 if(dangerouscheck(king,cName))
+	 {
 	 if(doc.children[0].first && document.getElementById(id-4).children[0].id=='Rook' && document.getElementById(id-4).children[0].first && (document.getElementById(id-1).className=='empty' || document.getElementById(id-1).className=='chsd') && document.getElementById(id-3).className=='empty')
 		 {
 		 posTo=id-2;
@@ -766,6 +794,7 @@ var doc=document.getElementById(id);
 		 posTo=id+2;
 		 check(doc,document.getElementById(posTo),cName,true);
 		 }
+	  }
 	 } 
 }
 </script>
